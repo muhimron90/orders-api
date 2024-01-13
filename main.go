@@ -1,36 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/muhimron90/orders-api/config"
+	"context"
+	"github.com/muhimron90/orders-api/application"
 	l "github.com/muhimron90/orders-api/logging"
 )
 
 func main() {
-	router := chi.NewRouter()
-	router.Use(middleware.Logger)
-	router.Get("/hello", basicHandler)
-	server := &http.Server{
-		Addr:    config.PORT_NUMBER,
-		Handler: router,
-	}
-	// listen server
-	// if error was found or not null (nil)
-	// print errror
-	err := server.ListenAndServe()
+	app := application.New()
+
+	err := app.Start(context.TODO())
 	if err != nil {
-		fmt.Println("failed to liesten to server", err)
+		l.Debug(true)
+		l.Logger(err.Error())
 	}
 
-}
-func basicHandler(w http.ResponseWriter, r *http.Request) {
-	l.Debug(false)
-
-	w.Write([]byte("Hello world"))
-
-	l.Logger("start")
 }
