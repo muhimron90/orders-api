@@ -8,6 +8,6 @@ run: build
 
 clean:
 	go clean
-	#rm ${BINARY_APP}
+	rm ${BINARY_APP}
 
 .PHONY: build run clean

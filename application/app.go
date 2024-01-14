@@ -40,15 +40,21 @@ func (a *App) Start(ctx context.Context) error {
 		}
 	}()
 	logging.Logger("starting server")
+
+	//create channel to concuren server
 	ch := make(chan error, 1)
+	//concurency server and assign error into channel
 	go func() {
+		//serve and listen server
+		// err is callback from server
 		err = server.ListenAndServe()
 		if err != nil {
 			ch <- fmt.Errorf("failed to start server : %w", err)
 		}
-
+		// if error wasnt found close channel
 		close(ch)
 	}()
+	// switch
 	select {
 	case err = <-ch:
 		return err
