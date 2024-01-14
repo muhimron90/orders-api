@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/muhimron90/orders-api/config"
@@ -14,20 +15,24 @@ import (
 type App struct {
 	router http.Handler
 	rdb    *redis.Client
+	config config.Config
 }
 
-func New() *App {
+func New(config config.Config) *App {
 	app := &App{
-		router: loadRoutes(),
-		rdb:    redis.NewClient(&redis.Options{}),
+		rdb: redis.NewClient(&redis.Options{
+			Addr: config.RedisAddress,
+		}),
+		config: config,
 	}
+	app.loadRoutes()
 	return app
 }
 
 func (a *App) Start(ctx context.Context) error {
 	logging.Debug(true)
 	server := &http.Server{
-		Addr:    config.PORT_NUMBER,
+		Addr:    fmt.Sprintf(":%d", a.config.ServerPort),
 		Handler: a.router,
 	}
 	err := a.rdb.Ping(ctx).Err()
@@ -41,6 +46,10 @@ func (a *App) Start(ctx context.Context) error {
 	}()
 	logging.Logger("starting server")
 
+	var sPort string = strconv.FormatUint(uint64(a.config.ServerPort), 10)
+	logging.Debug(true)
+	logging.Logger(a.config.RedisAddress)
+	logging.Logger(string(sPort))
 	//create channel to concuren server
 	ch := make(chan error, 1)
 	//concurency server and assign error into channel

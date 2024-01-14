@@ -6,11 +6,12 @@ import (
 	"os/signal"
 
 	"github.com/muhimron90/orders-api/application"
+	"github.com/muhimron90/orders-api/config"
 	l "github.com/muhimron90/orders-api/logging"
 )
 
 func main() {
-	app := application.New()
+	app := application.New(config.LoadConfig())
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()

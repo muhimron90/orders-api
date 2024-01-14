@@ -3,3 +3,4 @@ api
 .null-ls_541249_main.go
 .txt
 *.txt
+.env

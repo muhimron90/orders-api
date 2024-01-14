@@ -112,7 +112,7 @@ type FindResult struct {
 	Cursor uint64
 }
 
-func (r *RedisRepo) findAll(ctx context.Context, page FindAllPage) (FindResult, error) {
+func (r *RedisRepo) FindAll(ctx context.Context, page FindAllPage) (FindResult, error) {
 	res := r.Client.SScan(ctx, "orders", uint64(page.Offset), "*", int64(page.Size))
 	keys, cursor, err := res.Result()
 	if err != nil {
